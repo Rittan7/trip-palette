@@ -1,0 +1,345 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Trip Details | Trip Palette</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- ヘッダー -->
+  <header class="site-header">
+    <div class="container">
+      <h1>✈️ Trip Palette</h1>
+      <p>旅の計画から思い出まで、ひとつに。</p>
+    </div>
+  </header>
+
+  <nav class="site-nav" aria-label="メインナビゲーション"><div class="container nav-inner"><a href="index.html">⌂ Home</a><a href="world-progress.html">🌎 My World Progress</a></div></nav>
+  <main class="container">
+
+    <!-- ホームに戻る -->
+    <a href="index.html" class="back-link">
+      ← 旅行一覧に戻る
+    </a>
+
+    <!-- 旅行の基本情報 -->
+    <section class="detail-header">
+      <h2 id="detail-trip-name">旅行情報を読み込み中...</h2>
+
+      <p id="detail-trip-destination"></p>
+      <p id="detail-trip-date"></p>
+      <p id="detail-countdown" class="countdown"></p>
+    </section>
+
+    <!-- 旅行が見つからない場合 -->
+    <p id="trip-not-found" class="empty-message" hidden>
+      旅行が見つかりません。
+      ホーム画面から旅行を選択してください。
+    </p>
+
+    <!-- 詳細情報のメイン部分 -->
+    <div id="trip-detail-content">
+      <nav class="mode-tabs" aria-label="旅行画面の切り替え">
+        <button type="button" id="mode-planner" class="mode-tab is-active" aria-pressed="true">✈️ Trip Planner</button>
+        <button type="button" id="mode-journal" class="mode-tab" aria-pressed="false">📖 Trip Journal</button>
+      </nav>
+      <div id="planner-view">
+      <!-- フライト情報 -->
+      <section class="detail-card">
+        <h3>✈️ フライト情報</h3>
+
+        <p class="section-description">
+          航空会社・便名・出発地・到着地を記録できます。
+        </p>
+
+        <div id="flight-list" class="detail-list"></div>
+        <button type="button" id="flight-add-btn" class="secondary-btn" hidden>＋ フライトを追加</button>
+
+        <form id="flight-form" class="detail-form" hidden>
+
+        <label for="flight-type">フライトの種類</label>
+        <select id="flight-type" required>
+          <option value="outbound">🛫 往路</option>
+          <option value="return">🛬 復路</option>
+        </select>
+
+          <label for="flight-airline">航空会社</label>
+          <input
+            type="text"
+            id="flight-airline"
+            list="airline-options"
+            placeholder="例：Air Canada"
+            required
+          >
+          <datalist id="airline-options">
+            <option value="ANA">
+            <option value="JAL">
+            <option value="Air Canada">
+            <option value="WestJet">
+            <option value="United Airlines">
+            <option value="Delta Air Lines">
+            <option value="American Airlines">
+            <option value="Hawaiian Airlines">
+            <option value="Korean Air">
+            <option value="Asiana Airlines">
+            <option value="EVA Air">
+            <option value="China Airlines">
+            <option value="Cathay Pacific">
+            <option value="Singapore Airlines">
+            <option value="Emirates">
+            <option value="Qatar Airways">
+            <option value="Lufthansa">
+            <option value="Air France">
+            <option value="British Airways">
+            <option value="Peach Aviation">
+            <option value="Jetstar">
+            <option value="ZIPAIR">
+          </datalist>
+
+          <label for="flight-number">便名</label>
+          <input
+            type="text"
+            id="flight-number"
+            placeholder="例：AC004"
+            required
+          >
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="flight-from">出発地</label>
+              <input
+                type="text"
+                id="flight-from"
+                placeholder="例：NRT"
+                required
+              >
+            </div>
+
+            <div class="form-field">
+              <label for="flight-to">到着地</label>
+              <input
+                type="text"
+                id="flight-to"
+                placeholder="例：YVR"
+                required
+              >
+            </div>
+          </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="flight-date">出発日</label>
+        <input
+          type="date"
+          id="flight-date"
+          required
+        >
+      </div>
+
+  <div class="form-field">
+    <label for="flight-time">出発時刻</label>
+    <input
+      type="time"
+      id="flight-time"
+      required
+    >
+  </div>
+</div>
+
+
+          <button type="submit" class="primary-btn" id="flight-submit-btn">＋ フライトを追加</button>
+          <button type="button" class="secondary-btn" id="flight-cancel-btn" hidden>キャンセル</button>
+          <button type="button" class="delete-btn" id="flight-delete-btn" hidden>この便を削除</button>
+        </form>
+      </section>
+
+        <section class="detail-card">
+          <div class="section-heading"><div><h3>🗓️ 日別スケジュール</h3><p class="section-description">訪問日・時刻を設定した場所が、日付順に並びます。</p></div></div>
+          <div id="planner-timeline"></div>
+          <div class="planner-toolbar"><button type="button" id="add-unscheduled-place" class="secondary-btn">＋ 日程未定の場所を追加</button><div id="unscheduled-inline-target"></div></div>
+        </section>
+
+
+      <!-- ホテル・その他の予約 -->
+      <section class="detail-card inline-editor" id="reservation-editor" hidden>
+        <div class="editor-heading"><h3>🏨 予約を追加</h3><button type="button" class="secondary-btn" data-close-editor="reservation-editor">閉じる ×</button></div>
+
+        <p class="section-description">
+          ホテル・ツアー・交通機関などの予約をまとめて管理。
+        </p>
+
+        <div id="reservation-list" class="detail-list"></div>
+
+        <form id="reservation-form" class="detail-form">
+
+          <label for="reservation-type">予約の種類</label>
+          <select id="reservation-type" required>
+            <option value="">選択してください</option>
+            <option value="ホテル">ホテル</option>
+            <option value="ツアー">ツアー</option>
+            <option value="交通機関">交通機関</option>
+            <option value="レストラン">レストラン</option>
+            <option value="その他">その他</option>
+          </select>
+
+          <label for="reservation-name">予約名</label>
+          <input
+            type="text"
+            id="reservation-name"
+            placeholder="例：Downtown Hotel"
+            required
+          >
+
+          <div class="form-row">
+            <div class="form-field"><label for="reservation-date">予約日・利用日</label><input type="date" id="reservation-date" required></div>
+            <div class="form-field"><label for="reservation-time">利用予定時刻（任意）</label><input type="time" id="reservation-time"></div>
+          </div>
+
+          <label for="reservation-note">予約番号・メモ</label>
+          <textarea
+            id="reservation-note"
+            rows="3"
+            placeholder="予約番号や確認事項など"
+          ></textarea>
+
+          <button type="submit" class="primary-btn">
+            ＋ 予約を追加
+          </button>
+        </form>
+      </section>
+
+      <!-- 行きたい場所 -->
+      <section class="detail-card inline-editor" id="place-editor" hidden>
+        <div class="editor-heading"><h3>📍 行きたい場所を追加</h3><button type="button" class="secondary-btn" data-close-editor="place-editor">閉じる ×</button></div>
+
+        <p class="section-description">
+          観光スポット・カフェ・レストランなどを記録。
+        </p>
+
+        <div id="place-list" class="detail-list"></div>
+
+        <form id="place-form" class="detail-form">
+
+          <label for="place-name">場所の名前</label>
+          <input
+            type="text"
+            id="place-name"
+            placeholder="例：Stanley Park"
+            required
+          >
+
+          <label for="place-category">カテゴリー</label>
+          <select id="place-category">
+            <option value="観光">観光</option>
+            <option value="グルメ">グルメ</option>
+            <option value="ショッピング">ショッピング</option>
+            <option value="自然">自然</option>
+            <option value="その他">その他</option>
+          </select>
+
+          <div class="form-row">
+            <div class="form-field"><label for="place-date">訪問予定日（任意）</label><input type="date" id="place-date"></div>
+            <div class="form-field"><label for="place-time">訪問予定時刻（任意）</label><input type="time" id="place-time"></div>
+          </div>
+          <label class="check-label"><input type="checkbox" id="place-visited"> 実際に訪れた場所として記録する</label>
+          <label for="place-note">メモ</label>
+          <textarea
+            id="place-note"
+            rows="3"
+            placeholder="行きたい理由・営業時間など"
+          ></textarea>
+
+          <button type="submit" class="primary-btn">
+            ＋ 場所を追加
+          </button>
+        </form>
+      </section>
+
+      <!-- 旧メモの保存データ・処理は維持し、画面からは非表示 -->
+      <section class="detail-card" id="legacy-notes" hidden>
+        <h3>📝 旅行メモ・思い出</h3>
+
+        <p class="section-description">
+          旅の準備メモや旅行後の思い出を残しましょう。
+        </p>
+
+        <div id="note-list" class="detail-list"></div>
+
+        <form id="note-form" class="detail-form">
+
+          <label for="note-title">タイトル</label>
+          <input
+            type="text"
+            id="note-title"
+            placeholder="例：旅行の持ち物"
+            required
+          >
+
+          <label for="note-content">内容</label>
+          <textarea
+            id="note-content"
+            rows="5"
+            placeholder="自由に記録してください"
+            required
+          ></textarea>
+
+          <button type="submit" class="primary-btn">
+            ＋ メモを追加
+          </button>
+        </form>
+      </section>
+      </div><!-- /planner-view -->
+      <div id="journal-view" hidden>
+        <section class="detail-card journal-summary-card">
+          <p class="eyebrow">MY TRAVEL MEMORIES</p>
+          <h3>💜 旅のサマリー</h3>
+          <div id="journal-summary-stats" class="summary-stats"></div>
+          <p id="journal-places-summary" class="section-description"></p>
+          <form id="journal-summary-form" class="detail-form">
+            <label for="journal-highlight">旅のハイライト・全体の感想</label>
+            <textarea id="journal-highlight" rows="4" placeholder="この旅で心に残ったこと、印象的だった景色など"></textarea>
+            <button type="submit" class="primary-btn">サマリーを保存</button>
+          </form>
+        </section>
+        <section class="detail-card">
+          <h3>📅 日付ごとの思い出</h3>
+          <p class="section-description">旅行期間中の日付を選んで、その日の出来事を記録しましょう。</p>
+          <div class="journal-calendar-header">
+            <button type="button" id="journal-prev-month" class="secondary-btn" aria-label="前の月">‹</button>
+            <strong id="journal-month-label"></strong>
+            <button type="button" id="journal-next-month" class="secondary-btn" aria-label="次の月">›</button>
+          </div>
+          <div id="journal-calendar" class="journal-calendar" aria-label="思い出カレンダー"></div>
+          <h4 id="journal-selected-date" class="journal-selected-date"></h4>
+          <div id="journal-entry-list" class="detail-list"></div>
+          <form id="journal-entry-form" class="detail-form">
+            <input type="hidden" id="journal-edit-id">
+            <label for="journal-entry-title">タイトル</label>
+            <input type="text" id="journal-entry-title" placeholder="例：ワイキキで過ごした午後" required>
+            <label for="journal-entry-content">その日の思い出</label>
+            <textarea id="journal-entry-content" rows="5" placeholder="訪れた場所や感想を書いてみましょう" required></textarea>
+            <button type="submit" id="journal-save-btn" class="primary-btn">＋ 日記を追加</button>
+            <button type="button" id="journal-cancel-btn" class="secondary-btn" hidden>編集をキャンセル</button>
+          </form>
+        </section>
+      </div><!-- /journal-view -->
+    </div>
+
+  </main>
+
+  <!-- フッター -->
+  <footer class="site-footer">
+    <p>© 2026 Trip Palette</p>
+  </footer>
+
+  <!-- 旅行詳細用JavaScript -->
+  <script src="trip-detail.js"></script>
+
+</body>
+</html>
